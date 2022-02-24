@@ -1,24 +1,17 @@
 import os
+from pathlib import Path
+
 import cv2
-import pydload
 import numpy as np
 
 from .image_utils import load_images
 
 
 class LiteClassifier:
-    def __init__(self):
-        url = "https://github.com/notAI-tech/NudeNet/releases/download/v0/classifier_lite.onnx"
-        home = os.path.expanduser("~")
-        model_folder = os.path.join(home, ".NudeNet/")
-        if not os.path.exists(model_folder):
-            os.mkdir(model_folder)
-
-        model_path = os.path.join(model_folder, os.path.basename(url))
-
-        if not os.path.exists(model_path):
-            print("Downloading the checkpoint to", model_path)
-            pydload.dload(url, save_to_path=model_path, max_time=None)
+    def __init__(self, model_path: Path):
+        model_path = model_path.resolve().absolute()
+        if not model_path.exists():
+            raise Exception('Cannot find model file')
 
         self.lite_model = cv2.dnn.readNet(model_path)
 

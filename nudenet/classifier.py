@@ -1,13 +1,11 @@
-import os
-import cv2
-import tarfile
-import pydload
 import logging
+from pathlib import Path
+
 import numpy as np
 import onnxruntime
-from .video_utils import get_interest_frames_from_video
+
 from .image_utils import load_images
-from PIL import Image as pil_image
+from .video_utils import get_interest_frames_from_video
 
 
 class Classifier:
@@ -18,30 +16,23 @@ class Classifier:
 
     nsfw_model = None
 
-    def __init__(self):
+    def __init__(self, model_path: Path):
         """
         model = Classifier()
         """
-        url = "https://github.com/notAI-tech/NudeNet/releases/download/v0/classifier_model.onnx"
-        home = os.path.expanduser("~")
-        model_folder = os.path.join(home, ".NudeNet/")
-        if not os.path.exists(model_folder):
-            os.mkdir(model_folder)
 
-        model_path = os.path.join(model_folder, os.path.basename(url))
+        model_path = model_path.resolve().absolute()
+        if not model_path.exists():
+            raise Exception('Cannot find model file')
 
-        if not os.path.exists(model_path):
-            print("Downloading the checkpoint to", model_path)
-            pydload.dload(url, save_to_path=model_path, max_time=None)
-
-        self.nsfw_model = onnxruntime.InferenceSession(model_path)
+        self.nsfw_model = onnxruntime.InferenceSession(model_path.as_posix())
 
     def classify_video(
-        self,
-        video_path,
-        batch_size=4,
-        image_size=(256, 256),
-        categories=["unsafe", "safe"],
+            self,
+            video_path,
+            batch_size=4,
+            image_size=(256, 256),
+            categories=["unsafe", "safe"],
     ):
         frame_indices = None
         frame_indices, frames, fps, video_length = get_interest_frames_from_video(
@@ -95,11 +86,11 @@ class Classifier:
         return return_preds
 
     def classify(
-        self,
-        image_paths=[],
-        batch_size=4,
-        image_size=(256, 256),
-        categories=["unsafe", "safe"],
+            self,
+            image_paths=[],
+            batch_size=4,
+            image_size=(256, 256),
+            categories=["unsafe", "safe"],
     ):
         """
         inputs:
@@ -151,15 +142,3 @@ class Classifier:
                 images_preds[loaded_image_path][preds[i][_]] = float(probs[i][_])
 
         return images_preds
-
-
-if __name__ == "__main__":
-    m = Classifier()
-
-    while 1:
-        print(
-            "\n Enter single image path or multiple images seperated by || (2 pipes) \n"
-        )
-        images = input().split("||")
-        images = [image.strip() for image in images]
-        print(m.predict(images), "\n")

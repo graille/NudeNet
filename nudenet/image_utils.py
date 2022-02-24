@@ -1,10 +1,8 @@
-import os
 import io
-import cv2
-import pydload
 import logging
-import numpy as np
 
+import cv2
+import numpy as np
 from PIL import Image as pil_image
 
 if pil_image is not None:
@@ -24,7 +22,7 @@ if pil_image is not None:
 
 
 def load_img(
-    path, grayscale=False, color_mode="rgb", target_size=None, interpolation="nearest"
+        path, grayscale=False, color_mode="rgb", target_size=None, interpolation="nearest"
 ):
     """Loads an image into PIL format.
     
@@ -136,6 +134,7 @@ def load_images(image_paths, image_size, image_names):
             image /= 255
             loaded_images.append(image)
             loaded_image_paths.append(image_names[i])
+
         except Exception as ex:
             logging.exception(f"Error reading {img_path} {ex}", exc_info=True)
 
