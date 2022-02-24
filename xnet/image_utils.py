@@ -42,7 +42,7 @@ def load_img(
     :return: A PIL Image instance.
     """
     if grayscale is True:
-        logging.warn("grayscale is deprecated. Please use " 'color_mode = "grayscale"')
+        logging.warning("grayscale is deprecated. Please use " 'color_mode = "grayscale"')
         color_mode = "grayscale"
     if pil_image is None:
         raise ImportError(

@@ -1,4 +1,4 @@
-import logging
+# import logging
 from pathlib import Path
 
 import numpy as np
@@ -38,9 +38,9 @@ class Classifier:
         frame_indices, frames, fps, video_length = get_interest_frames_from_video(
             video_path
         )
-        logging.debug(
-            f"VIDEO_PATH: {video_path}, FPS: {fps}, Important frame indices: {frame_indices}, Video length: {video_length}"
-        )
+        # logging.debug(
+        #     f"VIDEO_PATH: {video_path}, FPS: {fps}, Important frame indices: {frame_indices}, Video length: {video_length}"
+        # )
 
         frames, frame_names = load_images(frames, image_size, image_names=frame_indices)
 
